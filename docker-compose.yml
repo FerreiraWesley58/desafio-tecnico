@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  backend:
+    image: wesleyferreira58/backend-app:latest
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=mysql://wesley:123456@db:3306/controle_estoque
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  frontend:
+    image: wesleyferreira58/frontend-app:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  db:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=controle_estoque
+      - MYSQL_USER=wesley
+      - MYSQL_PASSWORD=123456
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
